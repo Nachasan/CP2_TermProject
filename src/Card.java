@@ -9,6 +9,7 @@ class Card {
 
 	public Card(int cardNumber) {
 		this.cardNumber = cardNumber;
+		setImage(img,cardNumber);
 	}
 
 	public BufferedImage setImage(BufferedImage img, int cardNumber) {
