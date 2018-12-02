@@ -1,24 +1,27 @@
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
+import com.idrsolutions.image.psd.PsdDecoder;
 
-import psd.model.Psd;
-
-public class Room extends JPanel{
+public class Room extends JPanel {
 	ArrayList<Card> Deck = new ArrayList<>();
 	Deck d = new Deck();
 	JPanel p;
-	Psd site = null;
-	
+	PsdDecoder pd = new PsdDecoder();
+	BufferedImage site;
+
 	public Room() {
-		
-		try{
-			File f = new File("site1.psd");
-			site = new Psd(f);
-		} catch(Exception e) {
+
+		try {
+			site = pd.read(new File("site1.psd"));
+		} catch (Exception e) {
 		}
-		
+	}
+
+	public void paint(Graphics g) {
+		g.drawImage(site, 150, 200, null);
 	}
 
 	public void reload() {
@@ -28,5 +31,4 @@ public class Room extends JPanel{
 			}
 		}
 	}
-
 }
