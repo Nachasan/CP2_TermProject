@@ -1,118 +1,80 @@
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
+import java.io.File;
+
+import psd.model.Psd;
+
+// 카드 크기 234*323
 
 class Card {
 	int cardNumber;
-	BufferedImage img = null;
+	Psd img = null;
 
 	public Card(int cardNumber) {
 		this.cardNumber = cardNumber;
-		setImage(img,cardNumber);
+		setImage(img, cardNumber);
 	}
 
-	public BufferedImage setImage(BufferedImage img, int cardNumber) {
+	public Psd setImage(Psd img, int cardNumber) {
 		switch (cardNumber) {
 		case 1:
-			BufferedImage one = null;
 			try {
-				one = ImageIO.read(new File("one.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("one.psd"));
+			} catch (Exception e) {
 			}
-			img = one;
 			break;
 		case 2:
-			BufferedImage two = null;
 			try {
-				two = ImageIO.read(new File("two.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("two.psd"));
+			} catch (Exception e) {
 			}
-			img = two;
 			break;
 		case 3:
-			BufferedImage three = null;
 			try {
-				three = ImageIO.read(new File("three.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("three.psd"));
+			} catch (Exception e) {
 			}
-			img = three;
 			break;
 		case 4:
-			BufferedImage four = null;
 			try {
-				four = ImageIO.read(new File("four.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("four.psd"));
+			} catch (Exception e) {
 			}
-			img = four;
 			break;
 		case 5:
-			BufferedImage five = null;
 			try {
-				five = ImageIO.read(new File("five.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("five.psd"));
+			} catch (Exception e) {
 			}
-			img = five;
 			break;
 		case 6:
-			BufferedImage six = null;
 			try {
-				six = ImageIO.read(new File("six.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("six.psd"));
+			} catch (Exception e) {
 			}
-			img = six;
 			break;
 		case 7:
-			BufferedImage seven = null;
 			try {
-				six = ImageIO.read(new File("seven.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("seven.psd"));
+			} catch (Exception e) {
 			}
-			img = seven;
 			break;
 		case 8:
-			BufferedImage eight = null;
 			try {
-				six = ImageIO.read(new File("eight.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("eight.psd"));
+			} catch (Exception e) {
 			}
-			img = eight;
 			break;
 		case 9:
-			BufferedImage nine = null;
 			try {
-				six = ImageIO.read(new File("nine.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("nine.psd"));
+			} catch (Exception e) {
 			}
-			img = nine;
 			break;
 		case 10:
-			BufferedImage ten = null;
 			try {
-				six = ImageIO.read(new File("ten.jpg"));
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				System.exit(0);
+				img = new Psd(new File("ten.psd"));
+			} catch (Exception e) {
 			}
-			img = ten;
 			break;
 		}
 		return img;

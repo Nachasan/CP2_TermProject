@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/radiu/Downloads/psd-library-0.0.1.jar" sourcepath="C:/Users/radiu/Downloads/psd-library-src-0.0.1.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/psd-image"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/psd-parser"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
