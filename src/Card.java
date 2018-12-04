@@ -13,10 +13,10 @@ class Card {
 
 	public Card(int cardNumber) {
 		this.cardNumber = cardNumber;
-		setImage(img, cardNumber);
+		setImage(cardNumber);
 	}
 
-	public BufferedImage setImage(BufferedImage img, int cardNumber) {
+	public void setImage(int cardNumber) {
 		switch (cardNumber) {
 		case 1:
 			try {
@@ -79,10 +79,5 @@ class Card {
 			}
 			break;
 		}
-		return img;
-	}
-
-	public void paint(Graphics g) {
-
 	}
 }
