@@ -1,6 +1,9 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import com.idrsolutions.image.psd.PsdDecoder;
 
@@ -9,74 +12,43 @@ import com.idrsolutions.image.psd.PsdDecoder;
 class Card {
 	int cardNumber;
 	BufferedImage img = null;
-	PsdDecoder pd = new PsdDecoder();
 
-	public Card(int cardNumber) {
+	public Card(int cardNumber) throws IOException {
 		this.cardNumber = cardNumber;
 		setImage(cardNumber);
 	}
 
-	public void setImage(int cardNumber) {
+	public void setImage(int cardNumber) throws IOException {
 		switch (cardNumber) {
 		case 1:
-			try {
-				img = pd.read(new File("one.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("one.png"));
 			break;
 		case 2:
-			try {
-				img = pd.read(new File("two.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("two.png"));
 			break;
 		case 3:
-			try {
-				img =  pd.read(new File("three.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("three.png"));
 			break;
 		case 4:
-			try {
-				img =  pd.read(new File("four.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("four.png"));
 			break;
 		case 5:
-			try {
-				img =  pd.read(new File("five.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("five.png"));
 			break;
 		case 6:
-			try {
-				img =  pd.read(new File("six.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("six.png"));
 			break;
 		case 7:
-			try {
-				img = pd.read(new File("seven.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("seven.png"));
 			break;
 		case 8:
-			try {
-				img = pd.read(new File("eight.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("eight.png"));
 			break;
 		case 9:
-			try {
-				img = pd.read(new File("nine.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("nine.png"));
 			break;
 		case 10:
-			try {
-				img = pd.read(new File("ten.psd"));
-			} catch (Exception e) {
-			}
+			img = ImageIO.read(new File("ten.png"));
 			break;
 		}
 	}
