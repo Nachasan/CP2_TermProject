@@ -1,38 +1,31 @@
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class Room extends JPanel {
 	ArrayList<Card> Deck = new ArrayList<>();
 	Deck d = new Deck();
 	JButton exit, call, plus, minus, die, help;
-	JTextField p1CoinText, p2CoinText, dealCoin, nowCoinText;
+	JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText;
 	BufferedImage site, p1, p2, s1, s2;
 	Random rand = new Random();
 	int nowCard, p1Coin, p2Coin, nowCoin, deal, turn;
 	int p1CardNum, p2CardNum, s1CardNum, s2CardNum;
 	Font f = new Font("", Font.BOLD, 20);
-	Boolean canExit, booking;
-	
-	
+	Boolean canExit, booking, change;
 
-	public Room() throws IOException{
+	public Room() throws IOException {
 		setLayout(null);
 		try {
 			site = ImageIO.read(new File("site1.png"));
 		} catch (Exception e) {
 		}
+		add(new image());
+
 		exit = new JButton("방 나가기");
 		canExit = true;
 		exit.setSize(200, 40);
@@ -40,6 +33,59 @@ public class Room extends JPanel {
 		exit.setFont(f);
 		exit.addActionListener(new MyListener());
 		add(exit);
+
+		reload();
+		game();
+		setVisible(true);
+	}
+
+	class image extends JPanel {
+		public image() {
+			setSize(1500, 355);
+			setLocation(0, 200);
+		}
+
+		public void paint(Graphics g) {
+			g.drawImage(site, 150, 0, null);
+			g.drawImage(p1, 155, 5, null);
+			g.drawImage(p2, 495, 5, null);
+			g.drawImage(s1, 770, 5, null);
+			g.drawImage(s2, 1110, 5, null);
+		}
+	}
+
+	public void reload() throws IOException {
+		for (int i = 1; i < 11; i++) {
+			for (int j = 0; j < 4; j++) {
+				Deck.add(j + 4 * (i - 1), new Card(i));
+			}
+		}
+		nowCard = 40;
+	}
+
+	public void game() throws IOException {
+		exit.setText("방 나가기 예약");
+		canExit = false;
+		booking = false;
+		boolean FLAG = true;
+		p1Coin = 50;
+		p2Coin = 50;
+		deal = 1;
+		turn = 1;
+		setting();
+//		while (FLAG) {
+		playing();
+
+		if (p1Coin == 0 || p2Coin == 0)
+			FLAG = false;
+
+		else if (nowCard == 0)
+			reload();
+//		}
+
+	}
+
+	public void setting() {
 
 		call = new JButton("Call");
 		call.setSize(70, 50);
@@ -75,64 +121,37 @@ public class Room extends JPanel {
 //		help.setFont(f);
 //		help.addActionListener(new MyListener());
 //		add(help);
-		
-		reload();
-		game();
-		setVisible(true);
-	}
 
-//	public void paint(Graphics g) {
-//		g.drawImage(site, 150, 200, null);
-//		g.drawImage(p1, 155, 205, null);
-//		g.drawImage(p2, 495, 205, null);
-//		g.drawImage(s1, 770, 205, null);
-//		g.drawImage(s2, 1110, 205, null);
-//
-//	}
-
-	public void reload() throws IOException{
-		for (int i = 1; i < 11; i++) {
-			for (int j = 0; j < 4; j++) {
-				Deck.add(j + 4 * (i - 1), new Card(i));
-			}
-		}
-		nowCard = 40;
-	}
-
-	public void game() throws IOException{
-		exit.setText("방 나가기 예약");
-		canExit = false;
-		booking = false;
-		boolean FLAG = true;
-		p1Coin = 50;
-		p2Coin = 50;
-		deal = 1;
-		turn = 1;
-		
-		p1CoinText = new JTextField("현재 코인: " + p1Coin);
-		p1CoinText.setLocation(200, 700);
-		add(p1CoinText);
-		
-		p2CoinText = new JTextField("현재 코인: " + p2Coin);
-		dealCoin = new JTextField("배팅할 코인: " + deal);
-		nowCoinText = new JTextField("배팅 코인: " + nowCoin);
-//		while (FLAG) {
-//		setting();
-
-		if (p1Coin == 0 || p2Coin == 0)
-			FLAG = false;
-
-		else if (nowCard == 0)
-			reload();
-//		}
-
-	}
-
-	public void setting() {
 		p1Coin -= 1;
 		p2Coin -= 1;
 		nowCoin = 2;
 
+		p1CoinText = new JLabel("현재 코인: " + p1Coin);
+		p1CoinText.setSize(200, 50);
+		p1CoinText.setLocation(200, 550);
+		p1CoinText.setFont(f);
+		add(p1CoinText);
+
+		p2CoinText = new JLabel("현재 코인: " + p2Coin);
+		p2CoinText.setSize(200, 50);
+		p2CoinText.setLocation(1175, 550);
+		p2CoinText.setFont(f);
+		add(p2CoinText);
+
+		dealCoin = new JLabel("배팅할 코인: " + deal);
+		dealCoin.setSize(200, 50);
+		dealCoin.setLocation(690, 560);
+		dealCoin.setFont(f);
+		add(dealCoin);
+
+		nowCoinText = new JLabel("배팅 코인: " + nowCoin);
+		nowCoinText.setSize(200, 50);
+		nowCoinText.setLocation(695, 150);
+		nowCoinText.setFont(f);
+		add(nowCoinText);
+	}
+
+	public void playing() {
 		int p1Num = rand.nextInt(nowCard - 1);
 		p1 = Deck.get(p1Num).img;
 		p1CardNum = Deck.get(p1Num).cardNumber;
@@ -174,26 +193,47 @@ public class Room extends JPanel {
 			}
 			if (e.getSource() == call) {
 				nowCoin += deal;
+				nowCoinText = new JLabel("배팅 코인: " + nowCoin);
+				if (turn % 2 == 1) {
+					p1Coin -= deal;
+					deal = 1;
+					p1CoinText.setText("현재 코인: " + p1Coin);
+					if (change)
+						dealCoin.setText("배팅할 코인: " + deal);
+				} else if (turn % 2 == 0) {
+					p2Coin -= deal;
+					deal = 1;
+					p2CoinText.setText("현재 코인: " + p2Coin);
+					if (change)
+						dealCoin.setText("배팅할 코인: " + deal);
+				}
 				turn += 1;
 			}
 			if (e.getSource() == plus) {
 				if (deal == p1Coin || deal == p2Coin) {
 				} else {
+					change = true;
 					deal += 1;
+					dealCoin.setText("배팅할 코인: " + deal);
 				}
 			}
 			if (e.getSource() == minus) {
 				if (deal == 1) {
 				} else {
 					deal -= 1;
+					dealCoin.setText("배팅할 코인: " + deal);
 				}
 			}
 			if (e.getSource() == die) {
 				if (turn % 2 == 0) {
 					p1Coin += nowCoin;
+					p1CoinText.setText("현재 코인: " + p1Coin);
+					p2CoinText.setText("현재 코인: " + p2Coin);
 					turn = 1;
 				} else if (turn % 2 == 1) {
 					p2Coin += nowCoin;
+					p1CoinText.setText("현재 코인: " + p1Coin);
+					p2CoinText.setText("현재 코인: " + p2Coin);
 					turn = 2;
 				}
 			}
