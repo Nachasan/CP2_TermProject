@@ -13,10 +13,10 @@ public class Room extends JPanel {
 	JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText;
 	BufferedImage site, p1, p2, s1, s2;
 	Random rand = new Random();
-	int nowCard, p1Coin, p2Coin, nowCoin, deal, turn;
+	int nowCard, p1Coin, p2Coin, nowCoin, deal, turn, dealedCoin, beforeDealedCoin;
 	int p1CardNum, p2CardNum, s1CardNum, s2CardNum;
 	Font f = new Font("", Font.BOLD, 20);
-	Boolean canExit, booking, change;
+	Boolean canExit, booking, change, temp;
 
 	public Room() throws IOException {
 		setLayout(null);
@@ -67,25 +67,22 @@ public class Room extends JPanel {
 		exit.setText("방 나가기 예약");
 		canExit = false;
 		booking = false;
-		boolean FLAG = true;
 		p1Coin = 50;
 		p2Coin = 50;
 		deal = 1;
 		turn = 1;
 		setting();
-//		while (FLAG) {
 		playing();
 
-		if (p1Coin == 0 || p2Coin == 0)
-			FLAG = false;
+		// if (p1Coin == 0 || p2Coin == 0)
+		// FLAG = false;
 
-		else if (nowCard == 0)
-			reload();
-//		}
-
+		// if (nowCard == 0)
+		// reload();
 	}
 
 	public void setting() {
+		change = false;
 
 		call = new JButton("Call");
 		call.setSize(70, 50);
@@ -115,12 +112,12 @@ public class Room extends JPanel {
 		die.addActionListener(new MyListener());
 		add(die);
 
-//		help = new JButton("?");
-//		help.setSize(50, 50);
-//		help.setLocation(1433, 910);
-//		help.setFont(f);
-//		help.addActionListener(new MyListener());
-//		add(help);
+		// help = new JButton("?");
+		// help.setSize(50, 50);
+		// help.setLocation(1433, 910);
+		// help.setFont(f);
+		// help.addActionListener(new MyListener());
+		// add(help);
 
 		p1Coin -= 1;
 		p2Coin -= 1;
@@ -152,6 +149,9 @@ public class Room extends JPanel {
 	}
 
 	public void playing() {
+		beforeDealedCoin = 0;
+		temp = true;
+
 		int p1Num = rand.nextInt(nowCard - 1);
 		p1 = Deck.get(p1Num).img;
 		p1CardNum = Deck.get(p1Num).cardNumber;
@@ -177,12 +177,94 @@ public class Room extends JPanel {
 		nowCard -= 1;
 	}
 
+	public void getWinner() {
+		int winner = 0;
+		if ((p1CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
+			if ((p2CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
+				if (p1CardNum < p2CardNum)
+					winner = 2;
+				else if (p1CardNum > p2CardNum)
+					winner = 1;
+				else if (p1CardNum == p2CardNum) {
+
+				}
+			}
+		} else if (((p1CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
+				|| ((p1CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
+				|| ((p1CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
+				|| ((p1CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum - 1))
+				|| ((p1CardNum == s1CardNum + 2) && (s1CardNum == s2CardNum - 1))
+				|| ((p1CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum + 1))) {
+			if (((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
+					|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
+					|| ((p2CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
+					|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum - 1))
+					|| ((p2CardNum == s1CardNum + 2) && (s1CardNum == s2CardNum - 1))
+					|| ((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum + 1))) {
+				if (p1CardNum < p2CardNum)
+					winner = 2;
+				else if (p1CardNum > p2CardNum)
+					winner = 1;
+				else if (p1CardNum == p2CardNum) {
+					playing();
+					repaint();
+				}
+			}
+		} else if ((p1CardNum == s1CardNum) || (p1CardNum == s2CardNum)) {
+			if ((p2CardNum == s1CardNum) || (p2CardNum == s2CardNum)) {
+				if (p1CardNum < p2CardNum)
+					winner = 2;
+				else if (p1CardNum > p2CardNum)
+					winner = 1;
+				else if (p1CardNum == p2CardNum) {
+					playing();
+					repaint();
+				}
+			}
+		} else {
+			if (p1CardNum < p2CardNum)
+				winner = 2;
+			else if (p1CardNum > p2CardNum)
+				winner = 1;
+			else if (p1CardNum == p2CardNum) {
+				playing();
+				repaint();
+			}
+		}
+		if (winner == 1) {
+			p1Coin += nowCoin;
+			turn = 1;
+			p1Coin -= 1;
+			p2Coin -= 1;
+			nowCoin = 2;
+			deal = 1;
+			nowCoinText.setText("배팅 코인: " + nowCoin);
+			dealCoin.setText("배팅할 코인: " + deal);
+			p1CoinText.setText("현재 코인: " + p1Coin);
+			p2CoinText.setText("현재 코인: " + p2Coin);
+			playing();
+			repaint();
+		} else if (winner == 2) {
+			p2Coin += nowCoin;
+			turn = 2;
+			p1Coin -= 1;
+			p2Coin -= 1;
+			nowCoin = 2;
+			deal = 1;
+			nowCoinText.setText("배팅 코인: " + nowCoin);
+			dealCoin.setText("배팅할 코인: " + deal);
+			p1CoinText.setText("현재 코인: " + p1Coin);
+			p2CoinText.setText("현재 코인: " + p2Coin);
+			playing();
+			repaint();
+		}
+	}
+
 	class MyListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == exit) {
 				if (canExit) {
-
 				} else if (!booking) {
 					exit.setText("예약 완료");
 					booking = true;
@@ -193,24 +275,36 @@ public class Room extends JPanel {
 			}
 			if (e.getSource() == call) {
 				nowCoin += deal;
-				nowCoinText = new JLabel("배팅 코인: " + nowCoin);
+				dealedCoin = deal - beforeDealedCoin;
+				beforeDealedCoin = dealedCoin;
+				nowCoinText.setText("배팅 코인: " + nowCoin);
 				if (turn % 2 == 1) {
 					p1Coin -= deal;
-					deal = 1;
 					p1CoinText.setText("현재 코인: " + p1Coin);
-					if (change)
-						dealCoin.setText("배팅할 코인: " + deal);
+					if ((change) || (temp)) {
+						dealCoin.setText("배팅할 코인: " + dealedCoin);
+						change = false;
+						deal = dealedCoin;
+						temp = false;
+					} else {
+						getWinner();
+					}
 				} else if (turn % 2 == 0) {
 					p2Coin -= deal;
-					deal = 1;
 					p2CoinText.setText("현재 코인: " + p2Coin);
-					if (change)
+					if ((change) || (temp)) {
 						dealCoin.setText("배팅할 코인: " + deal);
+						change = false;
+						deal = dealedCoin;
+						temp = false;
+					} else {
+						getWinner();
+					}
 				}
 				turn += 1;
 			}
 			if (e.getSource() == plus) {
-				if (deal == p1Coin || deal == p2Coin) {
+				if ((deal == p1Coin) || (deal == p2Coin)) {
 				} else {
 					change = true;
 					deal += 1;
@@ -218,8 +312,10 @@ public class Room extends JPanel {
 				}
 			}
 			if (e.getSource() == minus) {
-				if (deal == 1) {
+				if (deal == dealedCoin) {
 				} else {
+					if (deal == dealedCoin - 1)
+						change = false;
 					deal -= 1;
 					dealCoin.setText("배팅할 코인: " + deal);
 				}
@@ -227,19 +323,30 @@ public class Room extends JPanel {
 			if (e.getSource() == die) {
 				if (turn % 2 == 0) {
 					p1Coin += nowCoin;
+					turn = 1;
+					p1Coin -= 1;
+					p2Coin -= 1;
+					nowCoin = 2;
 					p1CoinText.setText("현재 코인: " + p1Coin);
 					p2CoinText.setText("현재 코인: " + p2Coin);
-					turn = 1;
+					dealCoin.setText("배팅할 코인: " + deal);
+					nowCoinText.setText("배팅 코인: " + nowCoin);
+					playing();
+					repaint();
 				} else if (turn % 2 == 1) {
 					p2Coin += nowCoin;
+					turn = 2;
+					p1Coin -= 1;
+					p2Coin -= 1;
+					nowCoin = 2;
 					p1CoinText.setText("현재 코인: " + p1Coin);
 					p2CoinText.setText("현재 코인: " + p2Coin);
-					turn = 2;
+					dealCoin.setText("배팅할 코인: " + deal);
+					nowCoinText.setText("배팅 코인: " + nowCoin);
+					playing();
+					repaint();
 				}
 			}
-//			if (e.getSource() == help) {
-//
-//			}
 		}
 	}
 }
