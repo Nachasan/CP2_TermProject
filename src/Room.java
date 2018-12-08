@@ -10,7 +10,7 @@ public class Room extends JPanel {
 	ArrayList<Card> Deck = new ArrayList<>();
 	Deck d = new Deck();
 	JButton exit, call, plus, minus, die, help;
-	JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText;
+	JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText, nowCardText;
 	BufferedImage site, p1, p2, s1, s2;
 	Random rand = new Random();
 	int nowCard, p1Coin, p2Coin, nowCoin, deal, turn, dealedCoin, beforeDealedCoin;
@@ -48,9 +48,9 @@ public class Room extends JPanel {
 		public void paint(Graphics g) {
 			g.drawImage(site, 150, 0, null);
 			g.drawImage(p1, 155, 5, null);
-			g.drawImage(p2, 495, 5, null);
-			g.drawImage(s1, 770, 5, null);
-			g.drawImage(s2, 1110, 5, null);
+			g.drawImage(p2, 1110, 5, null);
+			g.drawImage(s1, 495, 5, null);
+			g.drawImage(s2, 770, 5, null);
 		}
 	}
 
@@ -67,8 +67,8 @@ public class Room extends JPanel {
 		exit.setText("방 나가기 예약");
 		canExit = false;
 		booking = false;
-		p1Coin = 50;
-		p2Coin = 50;
+		p1Coin = 20;
+		p2Coin = 20;
 		deal = 1;
 		turn = 1;
 		setting();
@@ -77,8 +77,6 @@ public class Room extends JPanel {
 		// if (p1Coin == 0 || p2Coin == 0)
 		// FLAG = false;
 
-		// if (nowCard == 0)
-		// reload();
 	}
 
 	public void setting() {
@@ -123,6 +121,12 @@ public class Room extends JPanel {
 		p2Coin -= 1;
 		nowCoin = 2;
 
+		nowCardText = new JLabel("남은 장수: " + nowCard);
+		nowCardText.setSize(200, 50);
+		nowCardText.setLocation(300, 150);
+		nowCardText.setFont(f);
+		add(nowCardText);
+
 		p1CoinText = new JLabel("현재 코인: " + p1Coin);
 		p1CoinText.setSize(200, 50);
 		p1CoinText.setLocation(200, 550);
@@ -148,7 +152,11 @@ public class Room extends JPanel {
 		add(nowCoinText);
 	}
 
-	public void playing() {
+	public void playing() throws IOException {
+		if (nowCard == 0) {
+			reload();
+			nowCard = 40;
+		}
 		beforeDealedCoin = 0;
 		temp = true;
 
@@ -170,14 +178,18 @@ public class Room extends JPanel {
 		Deck.remove(s1Num);
 		nowCard -= 1;
 
-		int s2Num = rand.nextInt(nowCard - 1);
+		int s2Num = 0;
+		if (nowCard != 1)
+			s2Num = rand.nextInt(nowCard - 1);
 		s2 = Deck.get(s2Num).img;
 		s2CardNum = Deck.get(s2Num).cardNumber;
 		Deck.remove(s2Num);
 		nowCard -= 1;
+
+		nowCardText.setText("남은 장수: " + nowCard);
 	}
 
-	public void getWinner() {
+	public void getWinner() throws IOException {
 		int winner = 0;
 		if ((p1CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
 			if ((p2CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
@@ -186,9 +198,14 @@ public class Room extends JPanel {
 				else if (p1CardNum > p2CardNum)
 					winner = 1;
 				else if (p1CardNum == p2CardNum) {
-
+					playing();
+					repaint();
 				}
+			} else {
+				winner = 1;
 			}
+		} else if ((p2CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
+			winner = 2;
 		} else if (((p1CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
 				|| ((p1CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
 				|| ((p1CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
@@ -209,7 +226,16 @@ public class Room extends JPanel {
 					playing();
 					repaint();
 				}
+			} else {
+				winner = 1;
 			}
+		} else if (((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
+				|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
+				|| ((p2CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
+				|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum - 1))
+				|| ((p2CardNum == s1CardNum + 2) && (s1CardNum == s2CardNum - 1))
+				|| ((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum + 1))) {
+			winner = 2;
 		} else if ((p1CardNum == s1CardNum) || (p1CardNum == s2CardNum)) {
 			if ((p2CardNum == s1CardNum) || (p2CardNum == s2CardNum)) {
 				if (p1CardNum < p2CardNum)
@@ -220,7 +246,11 @@ public class Room extends JPanel {
 					playing();
 					repaint();
 				}
+			} else {
+				winner = 1;
 			}
+		} else if ((p2CardNum == s1CardNum) || (p2CardNum == s2CardNum)) {
+			winner = 2;
 		} else {
 			if (p1CardNum < p2CardNum)
 				winner = 2;
@@ -287,7 +317,10 @@ public class Room extends JPanel {
 						deal = dealedCoin;
 						temp = false;
 					} else {
-						getWinner();
+						try {
+							getWinner();
+						} catch (IOException e1) {
+						}
 					}
 				} else if (turn % 2 == 0) {
 					p2Coin -= deal;
@@ -298,7 +331,10 @@ public class Room extends JPanel {
 						deal = dealedCoin;
 						temp = false;
 					} else {
-						getWinner();
+						try {
+							getWinner();
+						} catch (IOException e1) {
+						}
 					}
 				}
 				turn += 1;
@@ -312,7 +348,7 @@ public class Room extends JPanel {
 				}
 			}
 			if (e.getSource() == minus) {
-				if (deal == dealedCoin) {
+				if ((deal == dealedCoin) || (deal == 1)) {
 				} else {
 					if (deal == dealedCoin - 1)
 						change = false;
@@ -331,7 +367,10 @@ public class Room extends JPanel {
 					p2CoinText.setText("현재 코인: " + p2Coin);
 					dealCoin.setText("배팅할 코인: " + deal);
 					nowCoinText.setText("배팅 코인: " + nowCoin);
-					playing();
+					try {
+						playing();
+					} catch (IOException e1) {
+					}
 					repaint();
 				} else if (turn % 2 == 1) {
 					p2Coin += nowCoin;
@@ -343,7 +382,10 @@ public class Room extends JPanel {
 					p2CoinText.setText("현재 코인: " + p2Coin);
 					dealCoin.setText("배팅할 코인: " + deal);
 					nowCoinText.setText("배팅 코인: " + nowCoin);
-					playing();
+					try {
+						playing();
+					} catch (IOException e1) {
+					}
 					repaint();
 				}
 			}
