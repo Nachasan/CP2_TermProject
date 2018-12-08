@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.idrsolutions.image.psd.PsdDecoder;
-
 // 카드 크기 234*323
 
 class Card {
