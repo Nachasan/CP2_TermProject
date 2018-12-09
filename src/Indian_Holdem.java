@@ -11,7 +11,6 @@ public class Indian_Holdem extends JFrame {
 	JButton exit, call, plus, minus, die, help;
 	JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText, nowCardText;
 	BufferedImage site;
-	int p1CardNum, p2CardNum, s1CardNum, s2CardNum;
 	Font f = new Font("", Font.BOLD, 20);
 
 	public Indian_Holdem() throws IOException {
@@ -44,11 +43,15 @@ public class Indian_Holdem extends JFrame {
 		}
 
 		public void paint(Graphics g) {
-			g.drawImage(site, 150, 0, null);
-			g.drawImage(d.p1, 155, 5, null);
-			g.drawImage(d.p2, 1110, 5, null);
-			g.drawImage(d.s1, 495, 5, null);
-			g.drawImage(d.s2, 770, 5, null);
+			if (d.canExit)
+				g.drawImage(site, 150, 0, null);
+			else {
+				g.drawImage(site, 150, 0, null);
+				g.drawImage(d.p1, 155, 5, null);
+				g.drawImage(d.p2, 1110, 5, null);
+				g.drawImage(d.s1, 495, 5, null);
+				g.drawImage(d.s2, 770, 5, null);
+			}
 		}
 	}
 

@@ -1,32 +1,87 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class Client {
-
-	public static void main(String[] args) {
+	Data d = new Data();
+	Socket socket;
+	
+	InputStream is;
+	OutputStream os;
+	ObjectInputStream ois;
+	ObjectOutputStream oos;
+	
+	public void connect() {
 		try {
-			Socket s = new Socket("localhost", 9999);  // 9999포트에 접속
-			System.out.println("Connected....");
-
-			Scanner sc = new Scanner(System.in);
-
-			while(true) {
-				String myMsg = sc.nextLine();
-
-				OutputStream os = s.getOutputStream();
-				DataOutputStream dos = new DataOutputStream(os);
-
-				dos.writeUTF(myMsg);
-
-				InputStream is = s.getInputStream();
-				DataInputStream dis = new DataInputStream(is);
-				String rcvMsg = dis.readUTF();
-
-				System.out.println("Echo : " + rcvMsg);
+			System.out.println("접속 시도");
+			socket = new Socket("127.0.0.1", 8080);
+			System.out.println("접속 완료");
+		} catch (Exception e) {
+		} 
+	}
+	
+	public void dataRecv() {
+		new Thread(new Runnable() {
+			boolean isThread = true;
+			
+			@Override
+			public void run() {
+				while (isThread) {
+					try {
+						d = (Data) ois.readObject();
+					} catch (Exception e) {
+					} 
+				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		}).start();
+	}
+	
+	public void dataSend() {
+		new Thread(new Runnable() {
+			boolean isThread = true;
+			
+			@Override
+			public void run() {
+				while (isThread) {
+					try {
+						oos.writeObject(d);
+					} catch (Exception e) {
+					}
+				}
+			}
+		}).start();
+	}
+	
+	public void streamSetting() {
+		InputStream is;
+		try {
+			is = socket.getInputStream();
+			ois = new ObjectInputStream(is);
+			os = socket.getOutputStream();
+			oos = new ObjectOutputStream(os);
+		} catch (Exception e) {
 		}
+	}
+	
+	public void closeAll() {
+		try {
+			socket.close();
+			ois.close();
+			is.close();
+			oos.close();
+			os.close();
+		} catch (Exception e) {
+		}
+	}
+	
+	public Client() {
+		
+		connect();
+		streamSetting();
+		dataSend();
+		dataRecv();
+	}
+	
+	public static void main(String[] args) {
+		new Client();
 	}
 }

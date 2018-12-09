@@ -1,10 +1,11 @@
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Data {
+public class Data implements Serializable{
 	ArrayList<Card> Deck = new ArrayList<>();
 	BufferedImage p1, p2, s1, s2;
 	int nowCard, p1Coin, p2Coin, nowCoin, deal, turn, dealedCoin, beforeDealedCoin;

@@ -2,32 +2,89 @@ import java.io.*;
 import java.net.*;
 
 public class Server {
-
-	public static void main(String[] args) {
-		ServerSocket a;
+	Data d = new Data();
+	ServerSocket serverSocket;
+	Socket socket;
+	
+	InputStream is;
+	OutputStream os;
+	ObjectInputStream ois;
+	ObjectOutputStream oos;
+	
+	public void serverSetting() {
 		try {
-			a = new ServerSocket(9999); // 9999번 포트로 접속 허용 설정
-			System.out.println("Multi-Server Start!!!...");
-			
-			Socket b = a.accept();   // client 접속 대기 중
-			System.out.println("Client Connected......");
-			
-			while(true) {
-				InputStream is = b.getInputStream();
-				DataInputStream ds = new DataInputStream(is);
-				
-				String rcvBuff = ds.readUTF();
-				System.out.println("읽은 내용 : " + rcvBuff);
-				
-				OutputStream os = b.getOutputStream();
-				DataOutputStream dos = new DataOutputStream(os);
-
-				dos.writeUTF(rcvBuff);
-				
-				
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			serverSocket = new ServerSocket(8080);
+			System.out.println("서버 생성");
+			socket = serverSocket.accept();
+			System.out.println("클라이언트 소켓 연결");
+		} catch (Exception e) {
 		}
+	}
+	
+	public void dataRecv() {
+		new Thread(new Runnable() {
+			boolean isThread = true;
+			
+			@Override
+			public void run() {
+				while (isThread) {
+					try {
+						d = (Data) ois.readObject();
+					} catch (Exception e) {
+					} 
+				}
+			}
+		}).start();
+	}
+	
+	public void dataSend() {
+		new Thread(new Runnable() {
+			boolean isThread = true;
+			
+			@Override
+			public void run() {
+				while (isThread) {
+					try {
+						oos.writeObject(d);
+					} catch (Exception e) {
+					}
+				}
+			}
+		}).start();
+	}
+	
+	public void streamSetting() {
+		InputStream is;
+		try {
+			is = socket.getInputStream();
+			ois = new ObjectInputStream(is);
+			os = socket.getOutputStream();
+			oos = new ObjectOutputStream(os);
+		} catch (Exception e) {
+		}
+	}
+	
+	public void closeAll() {
+		try {
+			serverSocket.close();
+			socket.close();
+			ois.close();
+			is.close();
+			oos.close();
+			os.close();
+		} catch (Exception e) {
+		}
+	}
+	
+	public Server() {
+		
+		serverSetting();
+		streamSetting();
+		dataRecv();
+		dataSend();
+	}
+	
+	public static void main(String[] args) {
+		new Server();
 	}
 }
