@@ -215,6 +215,7 @@ public class Indian_Holdem extends JFrame {
 		if (winner == 1) {
 			d.set1Coin(d.p1Coin + d.nowCoin);
 			d.setTurn(1);
+			gameEnd();
 			d.set1Coin(d.p1Coin - 1);
 			d.set2Coin(d.p2Coin - 1);
 			d.setNowCoin(2);
@@ -228,6 +229,7 @@ public class Indian_Holdem extends JFrame {
 		} else if (winner == 2) {
 			d.set2Coin(d.p2Coin + d.nowCoin);
 			d.setTurn(2);
+			gameEnd();
 			d.set1Coin(d.p1Coin - 1);
 			d.set2Coin(d.p2Coin - 1);
 			d.setNowCoin(2);
@@ -241,6 +243,11 @@ public class Indian_Holdem extends JFrame {
 		}
 
 		nowCardText.setText("남은 장수: " + d.nowCard);
+	}
+	
+	public void gameEnd() {
+		if ((d.p1Coin == 0) || (d.p2Coin == 0))
+			System.exit(0);
 	}
 
 	class MyListener implements ActionListener {
@@ -261,6 +268,7 @@ public class Indian_Holdem extends JFrame {
 				d.setDealedCoin(d.deal - d.beforeDealedCoin);
 				d.setBefDealedCoin(d.dealedCoin);
 				nowCoinText.setText("배팅 코인: " + d.nowCoin);
+				d.setTurn(d.turn + 1);
 				if (d.turn % 2 == 1) {
 					d.set1Coin(d.p1Coin - d.deal);
 					p1CoinText.setText("현재 코인: " + d.p1Coin);
@@ -290,7 +298,6 @@ public class Indian_Holdem extends JFrame {
 						}
 					}
 				}
-				d.setTurn(d.turn + 1);
 			}
 			if (e.getSource() == plus) {
 				if ((d.deal == d.p1Coin) || (d.deal == d.p2Coin)) {
@@ -313,6 +320,7 @@ public class Indian_Holdem extends JFrame {
 				if (d.turn % 2 == 0) {
 					d.set1Coin(d.p1Coin + d.nowCoin);
 					d.setTurn(1);
+					gameEnd();
 					d.set1Coin(d.p1Coin - 1);
 					d.set2Coin(d.p2Coin - 1);
 					d.setNowCoin(2);
@@ -328,6 +336,7 @@ public class Indian_Holdem extends JFrame {
 				} else if (d.turn % 2 == 1) {
 					d.set2Coin(d.p2Coin + d.nowCoin);
 					d.setTurn(2);
+					gameEnd();
 					d.set1Coin(d.p1Coin - 1);
 					d.set2Coin(d.p2Coin - 1);
 					d.setNowCoin(2);
