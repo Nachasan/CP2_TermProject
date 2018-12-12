@@ -12,6 +12,7 @@ public class Indian_Holdem extends JFrame {
 	JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText, nowCardText;
 	BufferedImage site;
 	Font f = new Font("", Font.BOLD, 20);
+	int check = d.getTurn();
 
 	public Indian_Holdem() throws IOException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -264,11 +265,11 @@ public class Indian_Holdem extends JFrame {
 				}
 			}
 			if (e.getSource() == call) {
+				System.out.println(check);
 				d.setNowCoin(d.nowCoin + d.deal);
 				d.setDealedCoin(d.deal - d.beforeDealedCoin);
 				d.setBefDealedCoin(d.dealedCoin);
 				nowCoinText.setText("배팅 코인: " + d.nowCoin);
-				d.setTurn(d.turn + 1);
 				if (d.turn % 2 == 1) {
 					d.set1Coin(d.p1Coin - d.deal);
 					p1CoinText.setText("현재 코인: " + d.p1Coin);
@@ -298,6 +299,8 @@ public class Indian_Holdem extends JFrame {
 						}
 					}
 				}
+				d.setTurn(d.turn + 1);
+				System.out.println(check);
 			}
 			if (e.getSource() == plus) {
 				if ((d.deal == d.p1Coin) || (d.deal == d.p2Coin)) {

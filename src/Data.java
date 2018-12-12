@@ -46,8 +46,6 @@ public class Data implements Serializable{
 		s2CardNum = Deck.get(s2Num).cardNumber;
 		Deck.remove(s2Num);
 		nowCard -= 1;
-		
-		
 	}
 
 	public void reload() throws IOException {
@@ -101,5 +99,9 @@ public class Data implements Serializable{
 
 	public void setTemp(boolean t) {
 		temp = t;
+	}
+	
+	public int getTurn() {
+		return turn;
 	}
 }
