@@ -5,12 +5,12 @@ public class Server {
 	Data d = new Data();
 	ServerSocket serverSocket;
 	Socket socket;
-	
+
 	InputStream is;
 	OutputStream os;
 	ObjectInputStream ois;
 	ObjectOutputStream oos;
-	
+
 	public void serverSetting() {
 		try {
 			serverSocket = new ServerSocket(8080);
@@ -20,27 +20,27 @@ public class Server {
 		} catch (Exception e) {
 		}
 	}
-	
+
 	public void dataRecv() {
 		new Thread(new Runnable() {
 			boolean isThread = true;
-			
+
 			@Override
 			public void run() {
 				while (isThread) {
 					try {
 						d = (Data) ois.readObject();
 					} catch (Exception e) {
-					} 
+					}
 				}
 			}
 		}).start();
 	}
-	
+
 	public void dataSend() {
 		new Thread(new Runnable() {
 			boolean isThread = true;
-			
+
 			@Override
 			public void run() {
 				while (isThread) {
@@ -52,7 +52,7 @@ public class Server {
 			}
 		}).start();
 	}
-	
+
 	public void streamSetting() {
 		InputStream is;
 		try {
@@ -63,7 +63,7 @@ public class Server {
 		} catch (Exception e) {
 		}
 	}
-	
+
 	public void closeAll() {
 		try {
 			serverSocket.close();
@@ -75,15 +75,15 @@ public class Server {
 		} catch (Exception e) {
 		}
 	}
-	
+
 	public Server() {
-		
+
 		serverSetting();
 		streamSetting();
 		dataRecv();
 		dataSend();
 	}
-	
+
 	public static void main(String[] args) {
 		new Server();
 	}

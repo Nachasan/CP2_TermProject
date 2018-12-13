@@ -5,6 +5,7 @@ import java.util.*;
 public class Server2 {
 	private ServerSocket serverSocket;
 	private Manager Man = new Manager();
+	private Random rnd = new Random();
 
 	public Server2() {
 	}
@@ -84,8 +85,47 @@ public class Server2 {
 						} else
 							writer.println("[FULL}");
 					}
+
+					else if (str.startsWith("[START]")) {
+						ready = true;
+
+						if (Man.isReady(roomNumber)) {
+							int a = rnd.nextInt(2);
+							if(a==0) {
+								writer.println("[FIRST]TRUE");
+								Man.sendToOthers(this, "[FIRST]TRUE");
+							} else {
+								writer.println("[FIRST]FALSE");
+								Man.sendToOthers(this, "[FIRST]FALSE");
+							}
+						}
+					}
+
+					else if (str.startsWith("[WIN]")) {
+						ready = false;
+						writer.println("[WIN]");
+						Man.sendToOthers(this, "[LOSE]");
+					}
 				}
 			} catch (Exception e) {
+			} finally {
+				try {
+					Man.remove(this);
+					if (reader != null)
+						reader.close();
+					if (writer != null)
+						writer.close();
+					if (socket != null)
+						socket.close();
+					reader = null;
+					writer = null;
+					socket = null;
+					System.out.println(userName + "님이 접속을 끊었습니다.");
+					System.out.println("접속자 수: " + Man.size());
+					Man.sendToRoom(roomNumber, "[DISCONNECT]" + userName);
+				} catch (Exception e) {
+
+				}
 			}
 		}
 	}
