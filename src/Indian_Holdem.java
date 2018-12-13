@@ -217,30 +217,12 @@ public class Indian_Holdem extends JFrame {
 			d.set1Coin(d.p1Coin + d.nowCoin);
 			d.setTurn(1);
 			gameEnd();
-			d.set1Coin(d.p1Coin - 1);
-			d.set2Coin(d.p2Coin - 1);
-			d.setNowCoin(2);
-			d.setDeal(1);
-			nowCoinText.setText("배팅 코인: " + d.nowCoin);
-			dealCoin.setText("배팅할 코인: " + d.deal);
-			p1CoinText.setText("현재 코인: " + d.p1Coin);
-			p2CoinText.setText("현재 코인: " + d.p2Coin);
-			d.playing();
-			repaint();
+			set();
 		} else if (winner == 2) {
 			d.set2Coin(d.p2Coin + d.nowCoin);
 			d.setTurn(2);
 			gameEnd();
-			d.set1Coin(d.p1Coin - 1);
-			d.set2Coin(d.p2Coin - 1);
-			d.setNowCoin(2);
-			d.setDeal(1);
-			nowCoinText.setText("배팅 코인: " + d.nowCoin);
-			dealCoin.setText("배팅할 코인: " + d.deal);
-			p1CoinText.setText("현재 코인: " + d.p1Coin);
-			p2CoinText.setText("현재 코인: " + d.p2Coin);
-			d.playing();
-			repaint();
+			set();
 		}
 
 		nowCardText.setText("남은 장수: " + d.nowCard);
@@ -249,6 +231,19 @@ public class Indian_Holdem extends JFrame {
 	public void gameEnd() {
 		if ((d.p1Coin == 0) || (d.p2Coin == 0))
 			System.exit(0);
+	}
+	
+	public void set() throws IOException {
+		d.set1Coin(d.p1Coin - 1);
+		d.set2Coin(d.p2Coin - 1);
+		d.setNowCoin(2);
+		d.setDeal(1);
+		nowCoinText.setText("배팅 코인: " + d.nowCoin);
+		dealCoin.setText("배팅할 코인: " + d.deal);
+		p1CoinText.setText("현재 코인: " + d.p1Coin);
+		p2CoinText.setText("현재 코인: " + d.p2Coin);
+		d.playing();
+		repaint();
 	}
 
 	class MyListener implements ActionListener {
@@ -324,34 +319,20 @@ public class Indian_Holdem extends JFrame {
 					d.set1Coin(d.p1Coin + d.nowCoin);
 					d.setTurn(1);
 					gameEnd();
-					d.set1Coin(d.p1Coin - 1);
-					d.set2Coin(d.p2Coin - 1);
-					d.setNowCoin(2);
-					p1CoinText.setText("현재 코인: " + d.p1Coin);
-					p2CoinText.setText("현재 코인: " + d.p2Coin);
-					dealCoin.setText("배팅할 코인: " + d.deal);
-					nowCoinText.setText("배팅 코인: " + d.nowCoin);
 					try {
-						d.playing();
+						set();
 					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-					repaint();
 				} else if (d.turn % 2 == 1) {
 					d.set2Coin(d.p2Coin + d.nowCoin);
 					d.setTurn(2);
 					gameEnd();
-					d.set1Coin(d.p1Coin - 1);
-					d.set2Coin(d.p2Coin - 1);
-					d.setNowCoin(2);
-					p1CoinText.setText("현재 코인: " + d.p1Coin);
-					p2CoinText.setText("현재 코인: " + d.p2Coin);
-					dealCoin.setText("배팅할 코인: " + d.deal);
-					nowCoinText.setText("배팅 코인: " + d.nowCoin);
 					try {
-						d.playing();
+						set();
 					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-					repaint();
 				}
 			}
 		}

@@ -12,6 +12,7 @@ public class Data implements Serializable{
 	int p1CardNum, p2CardNum, s1CardNum, s2CardNum;
 	Boolean canExit, booking, change, temp;
 	Random rand = new Random();
+	String name;
 
 	public void playing() throws IOException {
 		if (nowCard == 0) {
@@ -103,5 +104,9 @@ public class Data implements Serializable{
 	
 	public int getTurn() {
 		return turn;
+	}
+	
+	public void setName(String n) {
+		name = n;
 	}
 }

@@ -91,7 +91,7 @@ public class Server2 {
 
 						if (Man.isReady(roomNumber)) {
 							int a = rnd.nextInt(2);
-							if(a==0) {
+							if (a == 0) {
 								writer.println("[FIRST]TRUE");
 								Man.sendToOthers(this, "[FIRST]TRUE");
 							} else {
