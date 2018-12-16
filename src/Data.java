@@ -50,9 +50,9 @@ public class Data implements Serializable {
 	}
 
 	public void reload() throws IOException {
-		for (int i = 1; i < 11; i++) {
+		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 4; j++) {
-				Deck.add(j + 4 * (i - 1), new Card(i));
+				Deck.add(j + 4 * i, new Card(i));
 			}
 		}
 		nowCard = 40;
@@ -78,11 +78,11 @@ public class Data implements Serializable {
 		nowCoin = nc;
 	}
 
-	public void set1Coin(int c1) {
+	public void setp1Coin(int c1) {
 		p1Coin = c1;
 	}
 
-	public void set2Coin(int c2) {
+	public void setp2Coin(int c2) {
 		p2Coin = c2;
 	}
 

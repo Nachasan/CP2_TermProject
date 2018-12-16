@@ -100,6 +100,81 @@ public class OmokServer {
 			Deck.remove(s2Num);
 			nowCard -= 1;
 		}
+		
+		public void getWinner() throws IOException {
+			int winner = 0;
+			if ((p1CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
+				if ((p2CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
+					if (p1CardNum < p2CardNum)
+						winner = 2;
+					else if (p1CardNum > p2CardNum)
+						winner = 1;
+					else if (p1CardNum == p2CardNum) {
+						writer.println("[REGAME]");
+					}
+				} else {
+					winner = 1;
+				}
+			} else if ((p2CardNum == s1CardNum) && (s1CardNum == s2CardNum)) {
+				winner = 2;
+			} else if (((p1CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
+					|| ((p1CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
+					|| ((p1CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
+					|| ((p1CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum - 1))
+					|| ((p1CardNum == s1CardNum + 2) && (s1CardNum == s2CardNum - 1))
+					|| ((p1CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum + 1))) {
+				if (((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
+						|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
+						|| ((p2CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
+						|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum - 1))
+						|| ((p2CardNum == s1CardNum + 2) && (s1CardNum == s2CardNum - 1))
+						|| ((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum + 1))) {
+					if (p1CardNum < p2CardNum)
+						winner = 2;
+					else if (p1CardNum > p2CardNum)
+						winner = 1;
+					else if (p1CardNum == p2CardNum) {
+						writer.println("[REGAME]");
+					}
+				} else {
+					winner = 1;
+				}
+			} else if (((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum - 1))
+					|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum + 1))
+					|| ((p2CardNum == s1CardNum - 2) && (s1CardNum == s2CardNum + 1))
+					|| ((p2CardNum == s1CardNum + 1) && (s1CardNum == s2CardNum - 1))
+					|| ((p2CardNum == s1CardNum + 2) && (s1CardNum == s2CardNum - 1))
+					|| ((p2CardNum == s1CardNum - 1) && (s1CardNum == s2CardNum + 1))) {
+				winner = 2;
+			} else if ((p1CardNum == s1CardNum) || (p1CardNum == s2CardNum)) {
+				if ((p2CardNum == s1CardNum) || (p2CardNum == s2CardNum)) {
+					if (p1CardNum < p2CardNum)
+						winner = 2;
+					else if (p1CardNum > p2CardNum)
+						winner = 1;
+					else if (p1CardNum == p2CardNum) {
+						writer.println("[REGAME]");
+					}
+				} else {
+					winner = 1;
+				}
+			} else if ((p2CardNum == s1CardNum) || (p2CardNum == s2CardNum)) {
+				winner = 2;
+			} else {
+				if (p1CardNum < p2CardNum)
+					winner = 2;
+				else if (p1CardNum > p2CardNum)
+					winner = 1;
+				else if (p1CardNum == p2CardNum) {
+					writer.println("[REGAME]");
+				}
+			}
+			if (winner == 1) {
+				writer.println("[WINNER]1");
+			} else if (winner == 2) {
+				writer.println("[WINNER]2");
+			}
+		}
 
 		public void run() {
 			try {
@@ -136,24 +211,44 @@ public class OmokServer {
 						if (Man.isReady(roomNumber)) {
 							int a = rand.nextInt(2);
 							if (a == 0) {
-								writer.println("[FIRST]FIRST");
 								cardSet();
 								writer.println(
+										"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
+								writer.println("[FIRST]FIRST");
+								Man.sendToOthers(this,
 										"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
 								Man.sendToOthers(this, "[FIRST]SECOND");
-								Man.sendToOthers(this,
-										"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
 							} else {
-								writer.println("[FIRST]SECOND");
 								cardSet();
 								writer.println(
 										"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
-								Man.sendToOthers(this, "[FIRST]FIRST");
+								writer.println("[FIRST]SECOND");
+
 								Man.sendToOthers(this,
 										"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
+								Man.sendToOthers(this, "[FIRST]FIRST");
 							}
 						}
 					}
+					
+					else if (msg.startsWith("[CHECK]")) 
+						getWinner();
+					
+					else if (msg.startsWith("[CALL]"))
+						Man.sendToOthers(this, msg);
+					
+					else if (msg.startsWith("[NEXT]")) {
+						cardSet();
+						writer.println(
+								"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
+//						writer.println("[NEXT]");
+						Man.sendToOthers(this,
+								"[PLAY]" + p1CardNum + " " + p2CardNum + " " + s1CardNum + " " + s2CardNum);
+//						Man.sendToOthers(this, "[NEXT]");
+					}
+					
+					else if (msg.startsWith("[SEND]"))
+						Man.sendToOthers(this, msg);
 
 					else if (msg.startsWith("[STOPGAME]"))
 						ready = false;

@@ -60,8 +60,8 @@ public class Indian_Holdem extends JFrame {
 		exit.setText("방 나가기 예약");
 		d.setCanEx(false);
 		d.setBook(false);
-		d.set1Coin(20);
-		d.set2Coin(20);
+		d.setp1Coin(20);
+		d.setp2Coin(20);
 		d.setDeal(1);
 		d.setTurn(1);
 		setting();
@@ -106,8 +106,8 @@ public class Indian_Holdem extends JFrame {
 		// help.addActionListener(new MyListener());
 		// add(help);
 
-		d.set1Coin(d.p1Coin - 1);
-		d.set2Coin(d.p2Coin - 1);
+		d.setp1Coin(d.p1Coin - 1);
+		d.setp2Coin(d.p2Coin - 1);
 		d.setNowCoin(2);
 
 		nowCardText = new JLabel("남은 장수: " + (d.nowCard - 4));
@@ -214,12 +214,12 @@ public class Indian_Holdem extends JFrame {
 			}
 		}
 		if (winner == 1) {
-			d.set1Coin(d.p1Coin + d.nowCoin);
+			d.setp1Coin(d.p1Coin + d.nowCoin);
 			d.setTurn(1);
 			gameEnd();
 			set();
 		} else if (winner == 2) {
-			d.set2Coin(d.p2Coin + d.nowCoin);
+			d.setp2Coin(d.p2Coin + d.nowCoin);
 			d.setTurn(2);
 			gameEnd();
 			set();
@@ -229,13 +229,13 @@ public class Indian_Holdem extends JFrame {
 	}
 	
 	public void gameEnd() {
-		if ((d.p1Coin == 0) || (d.p2Coin == 0))
+		if ((d.p1Coin <= 0) || (d.p2Coin <= 0))
 			System.exit(0);
 	}
 	
 	public void set() throws IOException {
-		d.set1Coin(d.p1Coin - 1);
-		d.set2Coin(d.p2Coin - 1);
+		d.setp1Coin(d.p1Coin - 1);
+		d.setp2Coin(d.p2Coin - 1);
 		d.setNowCoin(2);
 		d.setDeal(1);
 		nowCoinText.setText("배팅 코인: " + d.nowCoin);
@@ -265,7 +265,7 @@ public class Indian_Holdem extends JFrame {
 				d.setBefDealedCoin(d.dealedCoin);
 				nowCoinText.setText("배팅 코인: " + d.nowCoin);
 				if (d.turn % 2 == 1) {
-					d.set1Coin(d.p1Coin - d.deal);
+					d.setp1Coin(d.p1Coin - d.deal);
 					p1CoinText.setText("현재 코인: " + d.p1Coin);
 					if ((d.change) || (d.temp)) {
 						dealCoin.setText("배팅할 코인: " + d.dealedCoin);
@@ -279,7 +279,7 @@ public class Indian_Holdem extends JFrame {
 						}
 					}
 				} else if (d.turn % 2 == 0) {
-					d.set2Coin(d.p2Coin - d.deal);
+					d.setp2Coin(d.p2Coin - d.deal);
 					p2CoinText.setText("현재 코인: " + d.p2Coin);
 					if ((d.change) || (d.temp)) {
 						dealCoin.setText("배팅할 코인: " + d.dealedCoin);
@@ -294,7 +294,6 @@ public class Indian_Holdem extends JFrame {
 					}
 				}
 				d.setTurn(d.turn + 1);
-				System.out.println(check);
 			}
 			if (e.getSource() == plus) {
 				if ((d.deal == d.p1Coin) || (d.deal == d.p2Coin)) {
@@ -315,7 +314,7 @@ public class Indian_Holdem extends JFrame {
 			}
 			if (e.getSource() == die) {
 				if (d.turn % 2 == 0) {
-					d.set1Coin(d.p1Coin + d.nowCoin);
+					d.setp1Coin(d.p1Coin + d.nowCoin);
 					d.setTurn(1);
 					gameEnd();
 					try {
@@ -324,7 +323,7 @@ public class Indian_Holdem extends JFrame {
 						e1.printStackTrace();
 					}
 				} else if (d.turn % 2 == 1) {
-					d.set2Coin(d.p2Coin + d.nowCoin);
+					d.setp2Coin(d.p2Coin + d.nowCoin);
 					d.setTurn(2);
 					gameEnd();
 					try {

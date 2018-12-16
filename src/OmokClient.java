@@ -10,7 +10,6 @@ import javax.swing.*;
 
 class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 	Card c = new Card();
-	public static final int FIRST = 1, LAST = 2;
 	private String info = "게임 중지";
 	private boolean enable = false;
 	private boolean running = false;
@@ -18,10 +17,12 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 
 	private Data d = new Data();
 	private JButton call, plus, minus, die;
-	private JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText, nowCardText;
-	private int p1CardNum, p2CardNum, s1CardNum, s2CardNum;
+	private JLabel p1CoinText, p2CoinText, dealCoin, nowCoinText, nowCardText, p1Name, p2Name;
+	private int p1CardNum, p2CardNum, s1CardNum, s2CardNum, playerNum;
+	private boolean change, temp;
 	private Font f = new Font("", Font.BOLD, 20);
-	private int p1Coin = -1, p2Coin = -1, nowCoin = -1, deal = -1, dealedCoin = -1, beforeDealedCoin = -1;
+	private int turn = -1, nowCard = -1, p1Coin = -1, p2Coin = -1, nowCoin = -1, deal = -1, dealedCoin = -1,
+			beforeDealedCoin = -1, winner = 0;
 	private BufferedImage site, p1, p2, s1, s2;
 
 	OmokBoard() {
@@ -61,7 +62,7 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 		die.setFont(f);
 		die.addActionListener(new MyListener());
 		add(die);
-		
+
 		nowCardText = new JLabel("남은 장수: ");
 		nowCardText.setSize(200, 50);
 		nowCardText.setLocation(150, 150);
@@ -93,25 +94,49 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 		add(nowCoinText);
 	}
 
+	public void refresh() {
+		nowCardText.setText("남은 장수: " + (nowCard));
+		p1CoinText.setText("현재 코인: " + p1Coin);
+		p2CoinText.setText("현재 코인: " + p2Coin);
+		dealCoin.setText("배팅할 코인: " + deal);
+		nowCoinText.setText("배팅 코인: " + nowCoin);
+	}
+
 	public boolean isRunning() { // 게임의 진행 상태를 반환한다.
 		return running;
 	}
 
-	public void startGame(String first) { // 게임을 시작한다.
+	public void startGame() { // 게임을 시작한다.
 		running = true;
-
-		if (first.equals("FIRST")) {
-			enable = true;
-			info = "게임 시작... 배팅하세요";
-		} else {
-			enable = false;
-			info = "게임 시작... 기다리세요";
-		}
-		setCardNum(p1CardNum, p2CardNum, s1CardNum, s2CardNum);
+		p1Coin = 19;
+		p2Coin = 19;
+		nowCoin = 2;
+		deal = 1;
+		nowCard = 40;
+		beforeDealedCoin = 0;
+		change = false;
+		temp = true;
 		try {
 			setImage();
 		} catch (IOException e) {
 		}
+		repaint();
+	}
+
+	public void nextGame() {
+		p1Coin -= 1;
+		p2Coin -= 1;
+		nowCoin = 2;
+		deal = 1;
+		beforeDealedCoin = 0;
+		change = false;
+		temp = true;
+		turn = winner;
+		writer.println("[SEND]" + p1Coin + "#" + p2Coin + "#" + nowCoin + "#" + deal + "#" + dealedCoin + "#"
+				+ beforeDealedCoin + "#" + change + "#" + temp + "#" + turn + "#" + enable);
+		System.out.println("[SEND]" + p1Coin + "#" + p2Coin + "#" + nowCoin + "#" + deal + "#" + dealedCoin + "#"
+				+ beforeDealedCoin + "#" + change + "#" + temp + "#" + turn + "#" + enable);
+		refresh();
 		repaint();
 	}
 
@@ -122,11 +147,6 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 		running = false;
 	}
 
-	public void putOpponent(int x, int y) { // 상대편의 돌을 놓는다.
-		info = "상대가 두었습니다. 두세요.";
-		repaint();
-	}
-
 	public void setEnable(boolean enable) {
 		this.enable = enable;
 	}
@@ -134,19 +154,77 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 	public void setWriter(PrintWriter writer) {
 		this.writer = writer;
 	}
-	
-	public void setCardNum(int p1cn, int p2cn, int s1cn, int s2cn) {
+
+	public void setCardNum(int p1cn, int p2cn, int s1cn, int s2cn) throws IOException {
 		p1CardNum = p1cn;
 		p2CardNum = p2cn;
 		s1CardNum = s1cn;
 		s2CardNum = s2cn;
+		setImage();
 	}
-	
+
 	public void setImage() throws IOException {
 		p1 = c.setImage(p1CardNum);
 		p2 = c.setImage(p2CardNum);
 		s1 = c.setImage(s1CardNum);
 		s2 = c.setImage(s2CardNum);
+	}
+
+	public void setNowCoin(int nc) {
+		nowCoin = nc;
+	}
+
+	public void setp1Coin(int c1) {
+		p1Coin = c1;
+	}
+
+	public void setp2Coin(int c2) {
+		p2Coin = c2;
+	}
+
+	public void setTurn(int t) {
+		turn = t;
+	}
+
+	public void setDeal(int d) {
+		deal = d;
+	}
+
+	public void setDealedCoin(int dc) {
+		dealedCoin = dc;
+	}
+
+	public void setBefDealedCoin(int bdc) {
+		beforeDealedCoin = bdc;
+	}
+
+	public void setChange(String c) {
+		change = Boolean.getBoolean(c);
+	}
+
+	public void setTemp(boolean t) {
+		temp = t;
+	}
+	
+	public void setPlayerNum(int i) {
+		playerNum = i;
+	}
+
+	public void setWinner(int winner) {
+		this.winner = winner;
+		if (winner == 1) {
+			p1Coin += nowCoin;
+			if (playerNum == 1)
+				enable = true;
+			else
+				enable = false;
+		} else if (winner == 2) {
+			p2Coin += nowCoin;
+			if (playerNum == 2)
+				enable = true;
+			else
+				enable = false;
+		}
 	}
 
 	class MyListener implements ActionListener {
@@ -156,16 +234,68 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 			if (!enable) {
 				return;
 			} else if (e.getSource() == call) {
-				writer.println("[CALL]" + p1Coin + " " + p2Coin + " " + nowCoin + " " + deal + " " + dealedCoin + " "
-						+ beforeDealedCoin + " ");
+				nowCoin += deal;
+				dealedCoin = deal - beforeDealedCoin;
+				beforeDealedCoin = dealedCoin;
+				if (turn % 2 == 1) {
+					p1Coin -= deal;
+					if ((change) || (temp)) {
+						change = false;
+						deal = dealedCoin;
+						temp = false;
+						turn += 1;
+						writer.println("[CALL]" + p1Coin + "#" + p2Coin + "#" + nowCoin + "#" + deal + "#" + dealedCoin + "#"
+								+ beforeDealedCoin + "#" + change + "#" + temp + "#" + turn);
+						enable = false;
+					} else {
+						writer.println("[CHECK]");
+						try {
+							Thread.sleep(1000);
+						} catch (Exception ee) {
+						}
+						writer.println("[NEXT]");
+						try {
+							Thread.sleep(1000);
+						} catch (Exception ee) {
+						}
+						temp = true;
+						nextGame();
+					}
+				} else if (turn % 2 == 0) {
+					p2Coin -= deal;
+					if ((change) || (temp)) {
+						change = false;
+						deal = dealedCoin;
+						temp = false;
+						turn += 1;
+						writer.println("[CALL]" + p1Coin + "#" + p2Coin + "#" + nowCoin + "#" + deal + "#" + dealedCoin + "#"
+								+ beforeDealedCoin + "#" + change + "#" + temp + "#" + turn);
+						enable = false;
+					} else {
+						writer.println("[CHECK]");
+						try {
+							Thread.sleep(1000);
+						} catch (Exception ee) {
+						}
+						writer.println("[NEXT]");
+						try {
+							Thread.sleep(1000);
+						} catch (Exception ee) {
+						}
+						temp = true;
+						nextGame();
+					}
+				}
+				refresh();
 			} else if (e.getSource() == plus) {
 				if ((deal == p1Coin) || (deal == p2Coin)) {
 					info = "가지고있는 코인보다 더 많은 코인을 배팅 할 수 없습니다.";
 				} else {
-					d.setChange(true);
+					change = true;
 					deal += 1;
 					dealCoin.setText("배팅할 코인: " + deal);
 				}
+				refresh();
 			} else if (e.getSource() == minus) {
 				if (deal == dealedCoin) {
 					info = "추가배팅한 코인보다 적은 코인을 배팅할 수 없습니다.";
@@ -173,10 +303,32 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 					info = "1개 이상을 배팅해야합니다.";
 				} else {
 					if (deal == dealedCoin - 1)
-						d.setChange(false);
+						change = false;
 					deal -= 1;
 					dealCoin.setText("배팅할 코인: " + deal);
 				}
+				refresh();
+			} else if (e.getSource() == die) {
+				if (turn % 2 == 0) {
+					p1Coin += nowCoin;
+					turn = 1;
+					// gameEnd();
+					// try {
+					// set();
+					// } catch (IOException e1) {
+					// e1.printStackTrace();
+					// }
+				} else if (d.turn % 2 == 1) {
+					p2Coin += nowCoin;
+					turn = 2;
+					// gameEnd();
+					// try {
+					// set();
+					// } catch (IOException e1) {
+					// e1.printStackTrace();
+					// }
+				}
+				refresh();
 			}
 		}
 	}
@@ -197,10 +349,18 @@ class OmokBoard extends JPanel { // 오목판을 구현하는 클래스
 	}
 
 	public void reset() {
-		try {
-			d.reset();
-		} catch (IOException e) {
-		}
+		p1 = null;
+		p1CardNum = -1;
+
+		p2 = null;
+		p2CardNum = -1;
+
+		s1 = null;
+		s1CardNum = -1;
+
+		s2 = null;
+		s2CardNum = -1;
+
 		repaint();
 	}
 }
@@ -346,7 +506,7 @@ public class OmokClient extends JFrame implements Runnable, ActionListener {
 		String msg; // 서버로부터의 메시지
 		try {
 			while ((msg = reader.readLine()) != null) {
-				
+
 				if (msg.startsWith("[ROOM]")) { // 방에 입장
 					if (!msg.equals("[ROOM]0")) { // 대기실이 아닌 방이면
 						enterButton.setEnabled(false);
@@ -389,23 +549,70 @@ public class OmokClient extends JFrame implements Runnable, ActionListener {
 						endGame("상대가 나갔습니다.");
 				}
 
-				else if (msg.startsWith("[FIRST]")) { // 돌의 색을 부여받는다.
+				else if (msg.startsWith("[FIRST]")) {
 					String first = msg.substring(7);
-					board.startGame(first); // 게임을 시작한다.
-					if (first.equals("FIRST"))
+					board.startGame(); // 게임을 시작한다.
+					if (first.equals("FIRST")) {
 						infoView.setText("선플레이어입니다.");
-					else
+						board.setEnable(true);
+						board.setPlayerNum(1);
+						board.setTurn(1);
+					} else {
 						infoView.setText("후플레이어입니다.");
+						board.setEnable(false);
+						board.setPlayerNum(2);
+						board.setTurn(2);
+					}
+					board.refresh();
 				}
-				
+
 				else if (msg.startsWith("[PLAY]")) {
 					String temp = msg.substring(6);
-					int p1cn = Integer.parseInt(temp.substring(0,1));
-					int p2cn = Integer.parseInt(temp.substring(2,3));
-					int s1cn = Integer.parseInt(temp.substring(4,5));
-					int s2cn = Integer.parseInt(temp.substring(6,7));
+					int p1cn = Integer.parseInt(temp.substring(0, 1));
+					int p2cn = Integer.parseInt(temp.substring(2, 3));
+					int s1cn = Integer.parseInt(temp.substring(4, 5));
+					int s2cn = Integer.parseInt(temp.substring(6, 7));
 					board.setCardNum(p1cn, p2cn, s1cn, s2cn);
 				}
+
+				else if (msg.startsWith("[CALL]")) {
+					String temp = msg.substring(6);
+					String[] data = temp.split("#");
+					board.setp1Coin(Integer.parseInt(data[0]));
+					board.setp2Coin(Integer.parseInt(data[1]));
+					board.setNowCoin(Integer.parseInt(data[2]));
+					board.setDeal(Integer.parseInt(data[3]));
+					board.setDealedCoin(Integer.parseInt(data[4]));
+					board.setBefDealedCoin(Integer.parseInt(data[5]));
+					board.setChange(data[6]);
+					board.setTemp(Boolean.getBoolean(data[7]));
+					board.setTurn(Integer.parseInt(data[8]));
+					board.setEnable(true);
+					board.refresh();
+				}
+
+				else if (msg.startsWith("[SEND]")) {
+					String temp = msg.substring(6);
+					String[] data = temp.split("#");
+					System.out.println(temp);
+					boolean check;
+					board.setp1Coin(Integer.parseInt(data[0]));
+					board.setp2Coin(Integer.parseInt(data[1]));
+					board.setNowCoin(Integer.parseInt(data[2]));
+					board.setDeal(Integer.parseInt(data[3]));
+					board.setDealedCoin(Integer.parseInt(data[4]));
+					board.setBefDealedCoin(Integer.parseInt(data[5]));
+					board.setChange(data[6]);
+					board.setTemp(true);
+					board.setTurn(Integer.parseInt(data[8]));
+					check = Boolean.getBoolean(data[9]);
+					board.setEnable(!check);
+					board.refresh();
+					board.repaint();
+				}
+
+				else if (msg.startsWith("[WINNER]"))
+					board.setWinner(Integer.parseInt(msg.substring(8)));
 
 				else if (msg.startsWith("[DROPGAME]")) // 상대가 기권하면
 					endGame("상대가 기권하였습니다.");
@@ -423,6 +630,10 @@ public class OmokClient extends JFrame implements Runnable, ActionListener {
 			msgView.append(ie + "\n");
 		}
 		msgView.append("접속이 끊겼습니다.");
+	}
+
+	public void setCardNum(String str, int p1cn, int p2cn, int s1cn, int s2cn) {
+
 	}
 
 	private void endGame(String msg) { // 게임의 종료시키는 메소드
