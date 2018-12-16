@@ -23,7 +23,7 @@ class Board extends JPanel {
 
 	Board() {
 		setSize(1400, 1000);
-		setLocation(0, 0);
+		setLocation(20, 0);
 		setLayout(null);
 		try {
 			site = ImageIO.read(new File("site1.png"));
@@ -58,7 +58,6 @@ class Board extends JPanel {
 		die.setFont(f);
 		die.addActionListener(new MyListener());
 		add(die);
-
 	}
 
 	class MyListener implements ActionListener {
@@ -84,7 +83,6 @@ class Board extends JPanel {
 				}
 			}
 		}
-
 	}
 
 	public boolean isRunning() {
@@ -132,8 +130,6 @@ class Board extends JPanel {
 
 		public void paint(Graphics g) {
 			g.drawImage(site, 100, 0, null);
-			drawCard(g);
-
 		}
 
 		synchronized public void drawCard(Graphics g) {
@@ -152,7 +148,8 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 	private JTextField roomBox = new JTextField("0");
 
 	private JLabel pInfo = new JLabel("대기실:  명");
-	private Vector<String> players = new Vector<>();
+	private DefaultListModel<String> players = new DefaultListModel<>();
+	private JList<String> pList = new JList<>(players);
 
 	private Button startButton = new Button("게임 시작");
 	private Button enterButton = new Button("입장하기");
@@ -173,11 +170,15 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 		setLayout(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		pInfo.setFont(f);
 		msgView.setEditable(false);
+		pInfo.setFont(f);
 		startButton.setFont(f);
 		enterButton.setFont(f);
 		exitButton.setFont(f);
+		infoView.setFont(f);
+
+		infoView.setLocation(10, 30);
+		infoView.setSize(480, 30);
 
 		JPanel p1 = new JPanel();
 		p1.setLayout(new GridLayout(3, 3));
@@ -194,35 +195,42 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 
 		JPanel p2 = new JPanel();
 		p2.setLayout(new BorderLayout());
-		p2.add(pInfo, "North");
-		p2.add(startButton, "South");
+		p2.add(pInfo, BorderLayout.NORTH);
+		p2.add(pList, BorderLayout.CENTER);
+		p2.add(startButton, BorderLayout.SOUTH);
 		startButton.setEnabled(false);
 		p2.setLocation(1420, 100);
-		p2.setSize(300, 70);
+		p2.setSize(300, 370);
 
 		JPanel p3 = new JPanel();
 		p3.setLayout(new BorderLayout());
 		p3.add(msgView, "Center");
 		p3.add(sendBox, "South");
-		p3.setLocation(1420, 190);
-		p3.setSize(300, 760);
+		p3.setLocation(1420, 490);
+		p3.setSize(300, 460);
 
+		add(infoView);
 		add(board);
 		add(p1);
 		add(p2);
 		add(p3);
+		
+		sendBox.addActionListener(this);
+		enterButton.addActionListener(this);
+		exitButton.addActionListener(this);
+		startButton.addActionListener(this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == sendBox) { // 메시지 입력 상자이면
-			String msg = sendBox.getText();
-			if (msg.length() == 0)
+			String str = sendBox.getText();
+			if (str.length() == 0)
 				return;
-			if (msg.length() >= 30)
-				msg = msg.substring(0, 30);
+			if (str.length() >= 30)
+				str = str.substring(0, 30);
 			try {
-				writer.println("[MSG]" + msg);
+				writer.println("[MSG]" + str);
 				sendBox.setText("");
 			} catch (Exception ie) {
 			}
@@ -258,7 +266,6 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 			String name = nameBox.getText().trim();
 			if (name.length() <= 2 || name.length() > 10) {
 				infoView.setText("이름이 잘못되었습니다. 3~10자");
-				nameBox.requestFocus();
 				return;
 			}
 			userName = name;
@@ -272,10 +279,6 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 		roomBox.setText("0");
 		enterButton.setEnabled(true);
 		exitButton.setEnabled(false);
-	}
-
-	private void nameList(String msg) {
-
 	}
 
 	@Override
@@ -296,20 +299,18 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 				} else if (str.startsWith("[PLAYERS]")) {
 					nameList(str.substring(9));
 				} else if (str.startsWith("[ENTER]")) {
-					players.add(str.substring(7));
+					players.addElement(str.substring(7));
 					playersInfo();
 					msgView.append("[" + str.substring(7) + "]님이 입장하였습니다.\n");
 				} else if (str.startsWith("[EXIT]")) {
-					players.remove(str.substring(6));
+					players.removeElement(str.substring(6));
 					playersInfo();
 					msgView.append("[" + str.substring(6) + "]님이 다른 방으로 입장하였습니다.\n");
 					if (roomNumber != 0)
 						endGame("상대가 나갔습니다.");
 				}
 			}
-
 		} catch (Exception e) {
-
 		}
 	}
 
@@ -347,12 +348,18 @@ public class Client2 extends JFrame implements Runnable, ActionListener {
 			startButton.setEnabled(false);
 
 	}
+	
+	private void nameList(String str) {
+		players.addElement(str);
+		playersInfo();
+	}
 
 	private void connect() {
 		try {
 			msgView.append("서버에 연결을 요청합니다.\n");
 			socket = new Socket("127.0.0.1", 7777);
 			msgView.append("---연결 성공--.\n");
+			msgView.append("이름을 입력하고 대기실로 입장하세요. \n");
 
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			writer = new PrintWriter(socket.getOutputStream(), true);

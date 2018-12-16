@@ -10,13 +10,16 @@ import javax.imageio.ImageIO;
 class Card {
 	int cardNumber;
 	BufferedImage img = null;
+	
+	public Card() {
+	}
 
 	public Card(int cardNumber) throws IOException {
 		this.cardNumber = cardNumber;
 		setImage(cardNumber);
 	}
 
-	public void setImage(int cardNumber) throws IOException {
+	public BufferedImage setImage(int cardNumber) throws IOException {
 		switch (cardNumber) {
 		case 1:
 			img = ImageIO.read(new File("one.png"));
@@ -45,9 +48,11 @@ class Card {
 		case 9:
 			img = ImageIO.read(new File("nine.png"));
 			break;
-		case 10:
+		case 0:
 			img = ImageIO.read(new File("ten.png"));
 			break;
 		}
+		
+		return img;
 	}
 }

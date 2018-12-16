@@ -5,9 +5,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Data implements Serializable{
+public class Data implements Serializable {
 	ArrayList<Card> Deck = new ArrayList<>();
-	BufferedImage p1, p2, s1, s2;
+	BufferedImage p1, p2, s1, s2, defaultCard;
 	int nowCard, p1Coin, p2Coin, nowCoin, deal, turn, dealedCoin, beforeDealedCoin;
 	int p1CardNum, p2CardNum, s1CardNum, s2CardNum;
 	Boolean canExit, booking, change, temp;
@@ -58,6 +58,22 @@ public class Data implements Serializable{
 		nowCard = 40;
 	}
 
+	public void reset() throws IOException {
+		p1 = null;
+		p1CardNum = -1;
+		
+		p2 = null;
+		p2CardNum = -1;
+		
+		s1 = null;
+		s1CardNum = -1;
+		
+		s2 = null;
+		s2CardNum = -1;
+		
+		nowCard = 0;
+	}
+
 	public void setNowCoin(int nc) {
 		nowCoin = nc;
 	}
@@ -101,11 +117,11 @@ public class Data implements Serializable{
 	public void setTemp(boolean t) {
 		temp = t;
 	}
-	
+
 	public int getTurn() {
 		return turn;
 	}
-	
+
 	public void setName(String n) {
 		name = n;
 	}

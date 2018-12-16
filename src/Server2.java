@@ -20,6 +20,8 @@ public class Server2 {
 				gameThread gt = new gameThread(socket);
 				gt.start();
 
+				Man.add(gt);
+				System.out.println("접속자 수: " + Man.size());
 			}
 		} catch (Exception e) {
 		}
@@ -85,6 +87,9 @@ public class Server2 {
 						} else
 							writer.println("[FULL}");
 					}
+
+					else if (str.startsWith("[MSG]"))
+						Man.sendToRoom(roomNumber, "[" + userName + "]: " + str.substring(5));
 
 					else if (str.startsWith("[START]")) {
 						ready = true;

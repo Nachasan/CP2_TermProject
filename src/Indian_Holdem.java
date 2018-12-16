@@ -260,7 +260,6 @@ public class Indian_Holdem extends JFrame {
 				}
 			}
 			if (e.getSource() == call) {
-				System.out.println(check);
 				d.setNowCoin(d.nowCoin + d.deal);
 				d.setDealedCoin(d.deal - d.beforeDealedCoin);
 				d.setBefDealedCoin(d.dealedCoin);
