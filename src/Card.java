@@ -21,6 +21,9 @@ class Card {
 
 	public BufferedImage setImage(int cardNumber) throws IOException {
 		switch (cardNumber) {
+		case 100:
+			img = ImageIO.read(new File("zero.png"));
+			break;
 		case 1:
 			img = ImageIO.read(new File("one.png"));
 			break;
@@ -51,6 +54,8 @@ class Card {
 		case 0:
 			img = ImageIO.read(new File("ten.png"));
 			break;
+		default:
+			img = ImageIO.read(new File("zero.png"));
 		}
 		
 		return img;
